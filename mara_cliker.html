@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f6eede">
+<title>Itayetzi Marisol</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 88C50 88 8 60 8 32 8 16 20 6 33 6c8 0 14 5 17 11 3-6 9-11 17-11 13 0 25 10 25 26 0 28-42 56-42 56Z' fill='%23c0203c'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:'Fraunces',serif;
+    background:#f6eede;
+    color:#382019;
+    min-height:100dvh;
+    display:flex;flex-direction:column;align-items:center;
+    overflow:hidden;
+    user-select:none;-webkit-user-select:none;
+    -webkit-tap-highlight-color:transparent;
+  }
+  /* Grano de papel muy sutil sobre toda la página */
+  body::after{
+    content:"";position:fixed;inset:0;z-index:60;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  }
+
+  /* ---- Lienzo de corazones (ocupan toda la pantalla, detrás del texto) ---- */
+  #lienzo{position:fixed;inset:0;z-index:1;overflow:hidden}
+  .corazon{
+    position:absolute;cursor:pointer;pointer-events:auto;will-change:transform;
+    animation:flotar var(--dur) ease-in-out var(--delay) infinite;
+  }
+  .nace{animation:nacer .6s ease-out both}
+  .nace svg{display:block;width:100%;height:auto;filter:drop-shadow(0 5px 7px rgba(122,17,33,.22))}
+  svg.latir{animation:latido .7s ease-in-out}
+  @keyframes nacer{
+    0%{transform:scale(0) rotate(-16deg);opacity:0}
+    55%{transform:scale(1.18) rotate(5deg);opacity:1}
+    78%{transform:scale(.93) rotate(-2deg)}
+    100%{transform:scale(1) rotate(0)}
+  }
+  @keyframes flotar{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+  @keyframes latido{0%,100%{transform:scale(1)}28%{transform:scale(1.28)}44%{transform:scale(1)}58%{transform:scale(1.16)}}
+
+  /* ---- Encabezado ---- */
+  header{text-align:center;padding:clamp(20px,4.5vh,50px) 20px 0;z-index:2;position:relative;pointer-events:none}
+  h1{font-weight:600;font-size:clamp(1.9rem,6vw,3.2rem);letter-spacing:.01em;color:#4a2419}
+  .ornamento{display:flex;align-items:center;justify-content:center;gap:12px;margin:10px 0 6px}
+  .ornamento span{display:block;height:1px;width:min(120px,22vw);background:#cfa88e}
+  .ornamento svg{width:13px;color:#c0203c}
+  .sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.05rem,3vw,1.35rem);color:#7c5a4a}
+
+  /* ---- Zona central: mensaje + botón + ayuda ---- */
+  main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;z-index:2;position:relative;pointer-events:none;padding-bottom:44px;width:100%}
+  #slot{height:clamp(4.2rem,10vh,5.2rem);display:flex;align-items:center;justify-content:center;width:100%}
+  #msj{
+    font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;
+    font-size:clamp(1.55rem,6vw,3.2rem);line-height:1.12;color:#8f1020;
+    padding:0 6vw;opacity:0;
+    text-shadow:0 1px 0 #f6eede,0 -1px 0 #f6eede,2px 0 0 #f6eede,-2px 0 0 #f6eede;
+  }
+  #msj::before{content:"«\00a0"}
+  #msj::after{content:"\00a0»"}
+  #msj.visible{animation:entrar .5s cubic-bezier(.22,1,.36,1) forwards}
+  #msj.visible.saliendo{animation:salir .45s ease forwards}
+  @keyframes entrar{from{opacity:0;transform:translateY(16px);filter:blur(5px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+  @keyframes salir{to{opacity:0;transform:translateY(-14px);filter:blur(4px)}}
+
+  .boton{
+    pointer-events:auto;
+    width:clamp(118px,26vmin,168px);aspect-ratio:1;border-radius:50%;
+    background:#c0203c;border:none;position:relative;cursor:pointer;
+    box-shadow:0 7px 0 #7e0f22,0 18px 34px -10px rgba(126,15,34,.5);
+    transition:transform .09s ease,box-shadow .09s ease;
+    touch-action:manipulation;
+  }
+  .boton:active{
+    transform:translateY(5px);
+    box-shadow:0 2px 0 #7e0f22,0 8px 18px -8px rgba(126,15,34,.5);
+  }
+  .boton::before{content:"";position:absolute;inset:9px;border:1.5px dashed rgba(246,238,222,.65);border-radius:50%}
+  .boton > svg{width:46%;position:absolute;left:50%;top:50%;translate:-50% -52%;animation:latido 1.6s infinite}
+  .onda{position:absolute;inset:-2px;border-radius:50%;border:2px solid rgba(192,32,60,.55);pointer-events:none;animation:onda .55s ease-out forwards}
+  @keyframes onda{from{transform:scale(1);opacity:.7}to{transform:scale(1.7);opacity:0}}
+  .ayuda{font-family:'Cormorant Garamond',serif;font-style:italic;color:#8a6a58;font-size:clamp(1rem,2.6vw,1.2rem)}
+
+  /* ---- Contador ---- */
+  #contador{
+    position:fixed;left:0;right:0;bottom:max(18px,env(safe-area-inset-bottom));
+    text-align:center;z-index:3;pointer-events:none;
+    font-size:clamp(.95rem,2.4vw,1.1rem);color:#7c5a4a;
+  }
+  #contador strong{display:inline-block;font-size:1.3em;color:#c0203c;font-weight:600}
+  #contador strong.pop{animation:popNum .35s ease}
+  @keyframes popNum{40%{transform:scale(1.4)}}
+
+  /* Pantallas muy bajas (móvil en horizontal): versión compacta */
+  @media (max-height:440px){
+    .ornamento,.sub{display:none}
+    h1{font-size:1.4rem}
+    header{padding-top:12px}
+    #slot{height:3rem}
+    .boton{width:100px}
+    main{gap:10px;padding-bottom:34px}
+  }
+</style>
+</head>
+<body>
+
+  <!-- Aquí caen y permanecen los corazones -->
+  <div id="lienzo"></div>
+
+  <header>
+    <h1>Mara</h1>
+    <div class="ornamento" aria-hidden="true">
+      <span></span>
+      <svg viewBox="0 0 100 100"><path d="M50 88C50 88 8 60 8 32 8 16 20 6 33 6c8 0 14 5 17 11 3-6 9-11 17-11 13 0 25 10 25 26 0 28-42 56-42 56Z" fill="currentColor"/></svg>
+      <span></span>
+    </div>
+    <p class="sub">Hay algo que quiero decirte, toque a toque</p>
+  </header>
+
+  <main>
+    <div id="slot" aria-live="polite"><p id="msj"></p></div>
+    <button id="boton" class="boton" type="button" aria-label="Poner un corazón en la página">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <path d="M50 88C50 88 8 60 8 32 8 16 20 6 33 6c8 0 14 5 17 11 3-6 9-11 17-11 13 0 25 10 25 26 0 28-42 56-42 56Z" fill="#f6eede"/>
+        <ellipse cx="33" cy="25" rx="10" ry="6.5" fill="#fff" opacity=".3" transform="rotate(-24 33 25)"/>
+      </svg>
+    </button>
+    <p class="ayuda">toca tantas veces como quieras</p>
+  </main>
+
+  <p id="contador" aria-live="polite"><strong id="num">0</strong> <span id="etiqueta">la página espera su primer corazón</span></p>
+
+<script>
+  // ---------- Datos ----------
+  const MENSAJES = [
+    "Te quiero",
+    "Me haces muy feliz",
+    "Siempre estas en mi cabeza",
+    "Te quiero Mara",
+    "Eres mi persona favorita",
+    "Te quiero Itayetzi",
+    "Cada latido mío te nombra",
+    "Te quiero Marisol",
+    "Contigo el tiempo vuela",
+    "Mi corazon es tuyo",
+    "Te amo",
+    "Gracias por existir"
+  ];
+  const COLORES = ['#c0203c','#a5122b','#d94f63','#8f0f26','#e26374','#b01a33','#c93450','#dd7285'];
+  const HEART = 'M50 88C50 88 8 60 8 32 8 16 20 6 33 6c8 0 14 5 17 11 3-6 9-11 17-11 13 0 25 10 25 26 0 28-42 56-42 56Z';
+  const SVGNS = 'http://www.w3.org/2000/svg';
+
+  const lienzo   = document.getElementById('lienzo');
+  const boton    = document.getElementById('boton');
+  const msj      = document.getElementById('msj');
+  const numEl    = document.getElementById('num');
+  const etiqueta = document.getElementById('etiqueta');
+
+  let clicks = 0;
+
+  // ---------- Posición libre: evita bordes y la zona del botón ----------
+  function lugarLibre(size){
+    const W = innerWidth, H = innerHeight;
+    const cx = W / 2, cy = H * 0.53;                 // centro aproximado del botón
+    const R  = Math.min(W, H) * 0.20 + size * 0.7;   // radio de exclusión
+    const mx = size / 2 + 8, my = size / 2 + 8;
+    let ultimo = null;
+    for (let i = 0; i < 40; i++){
+      const x = mx + Math.random() * (W - 2 * mx);
+      const y = my + Math.random() * (H - 2 * my);
+      ultimo = { x: x / W * 100, y: y / H * 100 };
+      if (Math.hypot(x - cx, y - cy) > R) return ultimo;
+    }
+    return ultimo;
+  }
+
+  // ---------- Crear un corazón que se queda para siempre ----------
+  function crearCorazon(){
+    const size = Math.round(30 + Math.random() * 40);
+    const { x, y } = lugarLibre(size);
+
+    const el = document.createElement('div');
+    el.className = 'corazon';
+    el.style.left = x + '%';
+    el.style.top  = y + '%';
+    el.style.width = size + 'px';
+    el.style.marginLeft = el.style.marginTop = (-size / 2) + 'px'; // centrado en el punto
+    el.style.setProperty('--dur',   (4 + Math.random() * 3).toFixed(2) + 's');
+    el.style.setProperty('--delay', (-Math.random() * 4).toFixed(2) + 's');
+    el.setAttribute('role','img');
+    el.setAttribute('aria-label','corazón');
+
+    const nace = document.createElement('div');
+    nace.className = 'nace';
+
+    const svg = document.createElementNS(SVGNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 100 100');
+
+    const path = document.createElementNS(SVGNS, 'path');
+    path.setAttribute('d', HEART);
+    path.setAttribute('fill', COLORES[Math.floor(Math.random() * COLORES.length)]);
+
+    const brillo = document.createElementNS(SVGNS, 'ellipse');
+    brillo.setAttribute('cx','33'); brillo.setAttribute('cy','25');
+    brillo.setAttribute('rx','10'); brillo.setAttribute('ry','6.5');
+    brillo.setAttribute('fill','#fff'); brillo.setAttribute('opacity','.35');
+    brillo.setAttribute('transform','rotate(-24 33 25)');
+
+    svg.append(path, brillo);
+    nace.appendChild(svg);
+    el.appendChild(nace);
+    lienzo.appendChild(el);
+
+    // Detalle: tocar un corazón ya puesto lo hace latir
+    el.addEventListener('pointerdown', ev => {
+      ev.stopPropagation();
+      svg.classList.remove('latir');
+      void svg.getBoundingClientRect(); // reinicia la animación
+      svg.classList.add('latir');
+    });
+    svg.addEventListener('animationend', () => svg.classList.remove('latir'));
+  }
+
+  // ---------- Mensaje cada 2 toques, se retira a los 3 s ----------
+  let t1, t2;
+  function mostrarMensaje(texto){
+    clearTimeout(t1); clearTimeout(t2);
+    msj.classList.remove('visible','saliendo');
+    void msj.offsetWidth; // reinicia la animación de entrada
+    msj.textContent = texto;
+    msj.classList.add('visible');
+    t1 = setTimeout(() => {
+      msj.classList.add('saliendo');
+      t2 = setTimeout(() => msj.classList.remove('visible','saliendo'), 500);
+    }, 3000);
+  }
+
+  // ---------- Contador ----------
+  function actualizarContador(){
+    const n = clicks;
+    if (n === 0){
+      numEl.style.display = 'none';
+      etiqueta.textContent = 'la página espera su primer corazón';
+    } else {
+      numEl.style.display = '';
+      numEl.textContent = n;
+      etiqueta.textContent = n === 1 ? 'corazón en la página' : 'corazones para decirte cuanto te quiero';
+      numEl.classList.remove('pop');
+      void numEl.offsetWidth;
+      numEl.classList.add('pop');
+    }
+  }
+
+  // ---------- Botón: un toque = un corazón ----------
+  boton.addEventListener('pointerdown', () => {
+    clicks++;
+    crearCorazon();
+    actualizarContador();
+    if (clicks % 2 === 0){
+      mostrarMensaje(MENSAJES[(clicks / 2 - 1) % MENSAJES.length]);
+    }
+    const onda = document.createElement('span');
+    onda.className = 'onda';
+    boton.appendChild(onda);
+    onda.addEventListener('animationend', () => onda.remove());
+  });
+
+  actualizarContador();
+</script>
+</body>
+</html>
